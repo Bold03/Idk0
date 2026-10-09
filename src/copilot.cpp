@@ -14,7 +14,7 @@ static Phase phase = Phase::Preflight;
 
 struct Action { float delay; std::function<void()> fn; };
 static std::queue<Action> q;
-static float wait = 0;
+static float waitTimer = 0;
 static std::mt19937 rng{std::random_device{}()};
 
 static float Human(float lo, float hi) { return std::uniform_real_distribution<float>(lo, hi)(rng); }
@@ -43,8 +43,8 @@ void CopilotStop() { while (!q.empty()) q.pop(); }
 void CopilotTick(float dt) {
     // 1) Jalankan antrean aksi dengan jeda acak (terasa seperti manusia)
     if (!q.empty()) {
-        wait += dt;
-        if (wait >= q.front().delay) { q.front().fn(); q.pop(); wait = 0; }
+        waitTimer += dt;
+        if (waitTimer >= q.front().delay) { q.front().fn(); q.pop(); waitTimer = 0; }
         return;
     }
 
